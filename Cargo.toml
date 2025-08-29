@@ -1,0 +1,17 @@
+[package]
+name = "rustylook"
+version = "0.1.0"
+edition = "2021"
+authors = ["Firebreather <dtenny95@gmail.com>"]
+description = "A simple library for colorizing terminal output"
+license = "MIT"
+repository = "https://github.com/firebreather-heart/rustylook"
+homepage = "https://github.com/firebreather-heart/rustylook"
+documentation = "https://docs.rs/rustylook"
+keywords = ["terminal", "color", "ansi", "cli"]
+categories = ["command-line-utilities"]
+readme = "README.md"
+
+[lib]
+name = "rustylook"
+path = "src/lib.rs"
