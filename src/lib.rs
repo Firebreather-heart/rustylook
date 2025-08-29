@@ -6,7 +6,7 @@ pub enum Color {
     Purple,
     Cyan,
     Gray,
-    White
+    White,
 }
 
 impl Color {
@@ -19,12 +19,12 @@ impl Color {
             Color::Purple => "35",
             Color::Cyan => "36",
             Color::Gray => "30",
-            Color::White => "37"
+            Color::White => "37",
         }
     }
 
     /// Create color type from string
-    pub fn from_str(s: &str) -> Option<Self> {
+    pub fn from_string(s: &str) -> Option<Self> {
         match s.to_lowercase().as_str() {
             "red" => Some(Color::Red),
             "green" => Some(Color::Green),
@@ -44,13 +44,13 @@ pub struct Brush {
 
 impl Brush {
     /// Create a new brush with specified color
-    /// 
+    ///
     /// # Arguments
     /// * `color` - A string slice representing the color name
-    /// 
+    ///
     /// # Available colors
     /// red, green, yellow, blue, purple, cyan, gray/grey, white
-    /// 
+    ///
     /// # Returns
     /// * `Some(Brush)` if the color is valid
     /// * `None` if the color is not recognized
@@ -69,7 +69,9 @@ impl Brush {
             }),
             "cyan" => Some(Brush { color: Color::Cyan }),
             "gray" | "grey" => Some(Brush { color: Color::Gray }),
-            "white" => Some(Brush { color: Color::White }),
+            "white" => Some(Brush {
+                color: Color::White,
+            }),
             _ => None,
         }
     }
@@ -84,10 +86,10 @@ impl Brush {
     }
 
     /// Format a given string with the color of the brush
-    /// 
+    ///
     /// # Arguments
     /// * `s` - The string slice to be painted
-    /// 
+    ///
     /// # Returns
     /// A `String` with ANSI color codes applied
     pub fn paint(&self, s: &str) -> String {
@@ -95,14 +97,14 @@ impl Brush {
     }
 
     /// Quickly format a string with a specified color
-    /// 
+    ///
     /// # Arguments
     /// * `s` - The string slice to be painted
     /// * `color` - The color name as a string slice
-    /// 
+    ///
     /// # Available colors
     /// red, green, yellow, blue, purple, cyan, gray/grey, white
-    /// 
+    ///
     /// # Example
     /// ```
     /// use rustylook::Brush;
@@ -111,8 +113,43 @@ impl Brush {
     /// ```
     pub fn q_paint(s: &str, color: &str) -> String {
         let brush = Brush {
-            color: Color::from_str(color).unwrap_or(Color::White),
+            color: Color::from_string(color).unwrap_or(Color::White),
         };
         brush.paint(s)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_brush_new_valid_colors() {
+        assert!(Brush::new("red").is_some());
+        assert!(Brush::new("blue").is_some());
+        assert!(Brush::new("green").is_some());
+        assert!(Brush::new("invalid").is_none());
+    }
+
+    #[test]
+    fn test_paint_contains_ansi_codes() {
+        let brush = Brush::new("red").unwrap();
+        let result = brush.paint("hello");
+        assert!(result.contains("\x1B[31m"));
+        assert!(result.contains("\x1B[0m"));
+        assert!(result.contains("hello"));
+    }
+
+    #[test]
+    fn test_q_paint() {
+        let result = Brush::q_paint("test", "blue");
+        assert!(result.contains("test"));
+        assert!(result.contains("\x1B[34m"));
+    }
+
+    #[test]
+    fn test_gray_spelling_variants() {
+        assert!(Brush::new("gray").is_some());
+        assert!(Brush::new("grey").is_some());
     }
 }
